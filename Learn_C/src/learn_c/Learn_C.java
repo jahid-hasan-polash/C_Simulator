@@ -3,22 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package c_simulator;
+package learn_c;
 
 /**
  *
  * @author jahidhasanpolash
  */
-public class C_Simulator {
+public class Learn_C {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        
-        openUI ui = new openUI();
-        ui.setVisible(true);
     }
     
 }
