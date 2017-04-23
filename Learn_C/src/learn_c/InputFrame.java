@@ -7,6 +7,10 @@ package learn_c;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -32,25 +36,25 @@ public class InputFrame extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        segment = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        description = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("code Segment: ");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        segment.setColumns(20);
+        segment.setRows(5);
+        jScrollPane1.setViewportView(segment);
 
         jLabel2.setText("description: ");
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane2.setViewportView(jTextArea2);
+        description.setColumns(20);
+        description.setRows(5);
+        jScrollPane2.setViewportView(description);
 
         jButton1.setText("Submit");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -111,18 +115,41 @@ public class InputFrame extends javax.swing.JFrame {
             try {
                 file.createNewFile();
                 PrintWriter writer = new PrintWriter(file);
-                JSONArray array;
-                writer.println();
+                JSONArray array = new JSONArray();
+                writer.println(array.toString());
+                writer.close();
+                //writer.println();
             } catch (Exception e) {
 
             }
 
         }
         try {
+            Scanner sc = new Scanner(file);
+            String line;
+            StringBuilder fileText = new StringBuilder();
+            line = sc.nextLine();
+            fileText.append(line);
+            fileText.append(System.lineSeparator());
+            while(sc.hasNextLine())
+            {
+                line = sc.nextLine();
+                fileText.append(line);
+                fileText.append(System.lineSeparator());
+            }
+            JSONArray datas = new JSONArray(fileText.toString());
+            JSONObject segDesc = new JSONObject();
+            segDesc.put("segment",segment.getText().replaceAll("\\s+", ""));
+            segDesc.put("description", description.getText());
+            datas.put(segDesc);
             PrintWriter writer = new PrintWriter(file);
-           
+            writer.println(datas.toString());
+            writer.close();
+            JOptionPane.showMessageDialog(null, "Added Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            segment.setText("");
+            description.setText("");
         } catch (Exception e) {
-
+           e.printStackTrace();
         }
 
 
@@ -167,12 +194,12 @@ public class InputFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea description;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextArea segment;
     // End of variables declaration//GEN-END:variables
 }

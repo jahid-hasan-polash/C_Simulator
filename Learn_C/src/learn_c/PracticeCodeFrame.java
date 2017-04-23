@@ -5,6 +5,16 @@
  */
 package learn_c;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  *
  * @author jahidhasanpolash
@@ -17,6 +27,8 @@ public class PracticeCodeFrame extends javax.swing.JFrame {
     public PracticeCodeFrame() {
         initComponents();
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,9 +40,9 @@ public class PracticeCodeFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        input = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        output = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextArea3 = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
@@ -41,14 +53,14 @@ public class PracticeCodeFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        input.setColumns(20);
+        input.setRows(5);
+        jScrollPane1.setViewportView(input);
 
-        jTextArea2.setEditable(false);
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane2.setViewportView(jTextArea2);
+        output.setEditable(false);
+        output.setColumns(20);
+        output.setRows(5);
+        jScrollPane2.setViewportView(output);
 
         jTextArea3.setEditable(false);
         jTextArea3.setColumns(20);
@@ -125,6 +137,87 @@ public class PracticeCodeFrame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        String inputCode = input.getText();
+        File file = new File("dataset.txt");
+        try {
+            Scanner sc = new Scanner(file);
+            StringBuilder datas = new StringBuilder();
+            String line = sc.nextLine();
+            datas.append(line);
+            datas.append(System.lineSeparator());
+            ArrayList<LineTracker> list = new ArrayList<>();
+            while(sc.hasNextLine())
+            {
+                line = sc.nextLine();
+                datas.append(line);
+                datas.append(System.lineSeparator());
+            }
+            sc.close();
+            inputCode = inputCode.replaceAll("\\s+", "");
+            JSONArray array = new JSONArray(datas.toString().trim());
+            for(int i = 0;i<array.length();i++)
+            {
+                JSONObject segDesc = array.getJSONObject(i);
+                System.out.println(segDesc.toString());
+                
+                if(inputCode.contains(segDesc.getString("segment")))
+                {
+                    System.out.println("contains");
+                    for(int j=0;j<inputCode.length();j++)
+                    {
+                        int index = inputCode.indexOf(segDesc.getString("segment"),j);
+                        System.out.println("index :"+index);
+                        if(index == -1)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            LineTracker match = new LineTracker();
+                            match.setText(segDesc.getString("description"));
+                            match.setPosition(index);
+                            list.add(match);
+                            j = index+1;
+                        }
+                        
+                        
+                        //System.out.println();
+                    }
+                    
+                    
+                    //System.out.println("");
+                    //inputCode = inputCode.replace(segDesc.getString("segment"), segDesc.getString("description"));
+                }
+            }
+            String text = "";
+            
+            for(int i=0;i<list.size()-1;i++)
+                for(int j=i+1;j<list.size();j++)
+                {
+                    LineTracker temp = list.get(i);
+                    if(list.get(i).getPosition()>list.get(j).getPosition())
+                    {
+                        list.set(i, list.get(j));
+                        list.set(j, temp);
+                    }
+                    
+                }
+            
+            for(int i = 0;i<list.size() ; i++)
+            {
+                text+= list.get(i).getText()+"\n";
+                System.out.println(""+list.get(i).getPosition());
+            }
+            
+            output.setText(text);
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(PracticeCodeFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
+            Logger.getLogger(PracticeCodeFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -163,6 +256,7 @@ public class PracticeCodeFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea input;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -171,8 +265,7 @@ public class PracticeCodeFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
+    private javax.swing.JTextArea output;
     // End of variables declaration//GEN-END:variables
 }
